@@ -2,6 +2,7 @@ package no.brreg.robpop.dao;
 
 import no.brreg.robpop.model.Person;
 import no.brreg.robpop.model.Project;
+import org.hibernate.LazyInitializationException;
 import org.junit.Test;
 
 import java.util.HashSet;
@@ -31,6 +32,22 @@ public class ProjectDAOTest {
         projectDAO.delete(project);
 
         assertThat(projectDAO.getAllProjects().size(), is(0));
+    }
+
+    @Test(expected = LazyInitializationException.class)
+    public void createProjectWithPeople_peopleAreLazyLoaded() {
+        Project project = new Project("OR Klient II", "ORII");
+        Person person = new Person("mgs", "Mads", "Sørhaug");
+        Set<Person> participants = new HashSet<>();
+        participants.add(person);
+        project.setParticipants(participants);
+        projectDAO.save(project);
+
+        Project fetchedProject = projectDAO.getAllProjects().get(0);
+
+        for (Person participant : fetchedProject.getParticipants()) {
+            assertThat(participant, is(person));
+        }
     }
 
     @Test
