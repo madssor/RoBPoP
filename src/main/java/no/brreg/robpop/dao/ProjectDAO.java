@@ -15,52 +15,37 @@ import java.util.List;
  */
 public class ProjectDAO {
     public void persist(Project project) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        session.beginTransaction();
-
-        session.save(project);
-
-        session.getTransaction().commit();
-        session.close();
+        HibernateUtil.persist(project);
     }
 
     public List<Project> getAllProjects() {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        session.beginTransaction();
 
+        //Må ha session for å lage criteria
         Criteria criteria = session.createCriteria(Project.class);
 
-        @SuppressWarnings("unchecked")
-        List<Project> projects = criteria.list();
+        List<Project> projects = HibernateUtil.runCriteria(criteria, session);
 
-        session.getTransaction().commit();
+        //Sessionen har et litt lengre scope enn ved runQuery
         session.close();
         return projects;
     }
 
     public Project getProjectsWithParticipants(String name) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        session.beginTransaction();
 
         Criteria criteria = session
                 .createCriteria(Project.class)
                 .setFetchMode("participants", FetchMode.JOIN)
                 .add(Restrictions.eq("name", name));
 
-        Project project = (Project)criteria.uniqueResult();
+        Project project = HibernateUtil.runCriteriaSingle(criteria, session);
 
-        session.getTransaction().commit();
         session.close();
         return project;
     }
 
     public void delete(Project project) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        session.beginTransaction();
-
-        session.delete(project);
-
-        session.getTransaction().commit();
-        session.close();
+        HibernateUtil.delete(project);
     }
 }
