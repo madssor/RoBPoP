@@ -1,9 +1,6 @@
 package no.brreg.robpop;
 
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.*;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
@@ -36,24 +33,34 @@ public class HibernateUtil {
         return sessionFactory;
     }
 
-    public static void persist(Object o) {
+    public static boolean save(Object o) {
         Session session = getSessionFactory().openSession();
         session.beginTransaction();
 
-        session.save(o);
-
-        session.getTransaction().commit();
-        session.close();
+        try {
+            session.save(o);
+            session.getTransaction().commit();
+        } catch (HibernateException hibernateException) {
+            return false;
+        } finally {
+            session.close();
+        }
+        return true;
     }
 
-    public static void delete(Object o) {
+    public static boolean delete(Object o) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         session.beginTransaction();
 
-        session.delete(o);
-
-        session.getTransaction().commit();
-        session.close();
+        try {
+            session.delete(o);
+        } catch (HibernateException hibernateException) {
+            return false;
+        } finally {
+            session.getTransaction().commit();
+            session.close();
+        }
+        return true;
     }
 
     public static <T> List<T> runQuery(String queryString) {

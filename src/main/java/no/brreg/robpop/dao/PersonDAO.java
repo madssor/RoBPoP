@@ -11,15 +11,15 @@ import java.util.List;
  */
 public class PersonDAO {
 
-    public void persistPerson(Person person) {
-        HibernateUtil.persist(person);
+    public boolean save(Person person) {
+        return HibernateUtil.save(person);
     }
 
     public List<Person> getAllPersons() {
         return HibernateUtil.runQuery("from Person");
     }
 
-    public void delete(Person person) {
-        HibernateUtil.delete(person);
+    public boolean delete(Person person) {
+        return HibernateUtil.delete(person);
     }
 }

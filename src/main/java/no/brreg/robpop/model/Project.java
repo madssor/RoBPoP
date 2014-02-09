@@ -14,13 +14,16 @@ import static org.hibernate.annotations.CascadeType.SAVE_UPDATE;
 @Entity
 public class Project {
 
-    @Column(name = "id")
+    @Column
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @Column(name = "name")
+    @Column
     private String name;
+
+    @Column(unique = true, nullable = false)
+    private String code;
 
     @ManyToMany
     @Cascade(SAVE_UPDATE)
@@ -29,18 +32,15 @@ public class Project {
             inverseJoinColumns = {@JoinColumn(name = "person_id")})
     private Set<Person> participants;
 
-    public Project(String name) {
+    public Project(String name, String code) {
         this.name = name;
+        this.code = code;
     }
 
     public Project() {}
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -51,11 +51,39 @@ public class Project {
         this.name = name;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
     public Set<Person> getParticipants() {
         return participants;
     }
 
     public void setParticipants(Set<Person> participants) {
         this.participants = participants;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Project project = (Project) o;
+
+        return code.equals(project.code);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return code.hashCode();
     }
 }

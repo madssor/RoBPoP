@@ -23,8 +23,8 @@ public class ProjectDAOTest {
 
     @Test
     public void createProject_listAllProjects() {
-        Project project = new Project("OR Klient II");
-        projectDAO.persist(project);
+        Project project = new Project("OR Klient II", "ORII");
+        projectDAO.save(project);
 
         assertThat(projectDAO.getAllProjects().size(), is(1));
 
@@ -35,12 +35,12 @@ public class ProjectDAOTest {
 
     @Test
     public void createProjectWithPeople_listAllPeopleInProject() {
-        Project project = new Project("OR Klient II");
-        Person person = new Person("Mads", "Sørhaug");
+        Project project = new Project("OR Klient II", "ORII");
+        Person person = new Person("mgs", "Mads", "Sørhaug");
         Set<Person> participants = new HashSet<>();
         participants.add(person);
         project.setParticipants(participants);
-        projectDAO.persist(project);
+        projectDAO.save(project);
 
         assertThat(projectDAO.getProjectsWithParticipants("OR Klient II").getName(), is(project.getName()));
         assertThat(projectDAO.getProjectsWithParticipants("OR Klient II").getParticipants(), hasItem(person));
@@ -53,5 +53,18 @@ public class ProjectDAOTest {
         personDAO.delete(person);
 
         assertThat(personDAO.getAllPersons().isEmpty(), is(true));
+    }
+
+    @Test
+    public void createProject_codeIsUnique() {
+        Project project = new Project("OR Klient II", "ORII");
+        projectDAO.save(project);
+
+        Project otherProject = new Project("Nytt Områderegister", "ORII");
+
+        assertThat(projectDAO.save(otherProject), is(false));
+
+        projectDAO.delete(project);
+
     }
 }

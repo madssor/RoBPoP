@@ -14,8 +14,8 @@ import java.util.List;
  * Date: 06.02.14 22:28
  */
 public class ProjectDAO {
-    public void persist(Project project) {
-        HibernateUtil.persist(project);
+    public boolean save(Project project) {
+        return HibernateUtil.save(project);
     }
 
     public List<Project> getAllProjects() {
@@ -45,7 +45,7 @@ public class ProjectDAO {
         return project;
     }
 
-    public void delete(Project project) {
-        HibernateUtil.delete(project);
+    public boolean delete(Project project) {
+        return HibernateUtil.delete(project);
     }
 }

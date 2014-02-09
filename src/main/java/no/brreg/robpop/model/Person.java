@@ -1,7 +1,6 @@
 package no.brreg.robpop.model;
 
 import javax.persistence.*;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -11,21 +10,25 @@ import java.util.Set;
 @Entity
 public class Person {
 
-    @Column(name = "id")
+    @Column
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @Column(name = "first_name")
+    @Column
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column
     private String lastName;
+
+    @Column(unique = true, nullable = false)
+    private String userName;
 
     @ManyToMany(mappedBy = "participants")
     private Set<Project> projects;
 
-    public Person(String firstName, String lastName) {
+    public Person(String username, String firstName, String lastName) {
+        this.userName = username;
         this.firstName = firstName;
         this.lastName = lastName;
     }
@@ -36,8 +39,12 @@ public class Person {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getFirstName() {
@@ -66,21 +73,21 @@ public class Person {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
-        Person that = (Person) o;
+        Person person = (Person) o;
 
-        if (id != that.id) return false;
+        return userName.equals(person.userName);
 
-        return Objects.equals(this.firstName, that.firstName) && Objects.equals(this.lastName, that.lastName);
     }
 
     @Override
     public int hashCode() {
-        int result = id;
-        result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
-        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
-        return result;
+        return userName.hashCode();
     }
 }
