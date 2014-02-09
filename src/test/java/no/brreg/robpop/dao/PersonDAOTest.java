@@ -11,8 +11,9 @@ import static org.junit.Assert.assertThat;
  * Date: 06.02.14 21:09
  */
 public class PersonDAOTest {
+
     @Test
-    public void persistPerson_getAll() {
+    public void persistPerson_save2_getAllFetches2() {
         PersonDAO personDAO = new PersonDAO();
         Person person = new Person("Mads", "Sørhaug");
         personDAO.persistPerson(person);
@@ -21,6 +22,9 @@ public class PersonDAOTest {
 
         assertThat(personDAO.getAllPersons(), hasItem(person));
         assertThat(personDAO.getAllPersons(), hasItem(person1));
+
+        personDAO.delete(person);
+        personDAO.delete(person1);
     }
 
 

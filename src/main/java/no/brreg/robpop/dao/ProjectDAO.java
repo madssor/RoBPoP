@@ -29,6 +29,8 @@ public class ProjectDAO {
         session.beginTransaction();
 
         Criteria criteria = session.createCriteria(Project.class);
+
+        @SuppressWarnings("unchecked")
         List<Project> projects = criteria.list();
 
         session.getTransaction().commit();
@@ -50,5 +52,15 @@ public class ProjectDAO {
         session.getTransaction().commit();
         session.close();
         return project;
+    }
+
+    public void delete(Project project) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
+
+        session.delete(project);
+
+        session.getTransaction().commit();
+        session.close();
     }
 }

@@ -28,11 +28,23 @@ public class PersonDAO {
         session.beginTransaction();
 
         Query personsQuery = session.createQuery("from Person");
+
+        @SuppressWarnings("unchecked")
         List<Person> persons = personsQuery.list();
 
         session.getTransaction().commit();
         session.close();
 
         return persons;
+    }
+
+    public void delete(Person person) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
+
+        session.delete(person);
+
+        session.getTransaction().commit();
+        session.close();
     }
 }

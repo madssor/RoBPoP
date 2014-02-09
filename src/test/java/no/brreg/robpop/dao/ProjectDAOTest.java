@@ -19,6 +19,7 @@ import static org.junit.Assert.assertThat;
 public class ProjectDAOTest {
 
     private ProjectDAO projectDAO = new ProjectDAO();
+    private PersonDAO personDAO = new PersonDAO();
 
     @Test
     public void createProject_listAllProjects() {
@@ -26,6 +27,10 @@ public class ProjectDAOTest {
         projectDAO.persist(project);
 
         assertThat(projectDAO.getAllProjects().size(), is(1));
+
+        projectDAO.delete(project);
+
+        assertThat(projectDAO.getAllProjects().size(), is(0));
     }
 
     @Test
@@ -39,5 +44,14 @@ public class ProjectDAOTest {
 
         assertThat(projectDAO.getProjectsWithParticipants("OR Klient II").getName(), is(project.getName()));
         assertThat(projectDAO.getProjectsWithParticipants("OR Klient II").getParticipants(), hasItem(person));
+
+        projectDAO.delete(project);
+
+        assertThat(projectDAO.getAllProjects().isEmpty(), is(true));
+        assertThat(personDAO.getAllPersons().isEmpty(), is(false));
+
+        personDAO.delete(person);
+
+        assertThat(personDAO.getAllPersons().isEmpty(), is(true));
     }
 }
