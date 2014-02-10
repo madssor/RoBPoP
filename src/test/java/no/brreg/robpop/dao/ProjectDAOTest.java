@@ -34,7 +34,7 @@ public class ProjectDAOTest {
         assertThat(projectDAO.getAllProjects().size(), is(0));
     }
 
-    @Test(expected = LazyInitializationException.class)
+    @Test
     public void createProjectWithPeople_peopleAreLazyLoaded() {
         Project project = new Project("OR Klient II", "ORII");
         Person person = new Person("mgs", "Mads", "Sørhaug");
@@ -45,9 +45,19 @@ public class ProjectDAOTest {
 
         Project fetchedProject = projectDAO.getAllProjects().get(0);
 
-        for (Person participant : fetchedProject.getParticipants()) {
-            assertThat(participant, is(person));
+        boolean lazyException = false;
+
+        try {
+            for (Person participant : fetchedProject.getParticipants()) {
+                assertThat(participant, is(person));
+            }
+        } catch (LazyInitializationException lie) {
+            lazyException = true;
         }
+        assertThat(lazyException, is(true));
+
+        projectDAO.delete(project);
+        personDAO.delete(person);
     }
 
     @Test
